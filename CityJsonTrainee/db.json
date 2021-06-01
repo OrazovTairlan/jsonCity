@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Semey",
+    "date": "2021",
+    "count": {
+      "female": 700,
+      "male": 500
+    }
+  },
+  {
+    "name": "Astana",
+    "date": "2020",
+    "count": {
+      "female": 500,
+      "male": 700
+    }
+  },
+  {
+    "name": "Astana",
+    "date": "2020",
+    "count": {
+      "female": 500,
+      "male": 700
+    }
+  },
+  {
+    "name": "Astana",
+    "date": "2020",
+    "count": {
+      "female": 500,
+      "male": 700
+    }
+  },
+  {
+    "name": "Astana",
+    "date": "2020",
+    "count": {
+      "female": 500,
+      "male": 700
+    }
+  }
+]
