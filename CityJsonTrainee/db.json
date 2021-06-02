@@ -38,5 +38,61 @@
       "female": 500,
       "male": 700
     }
+  },
+  {
+    "name": "Astana",
+    "date": "2020",
+    "count": {
+      "female": 500,
+      "male": 700
+    }
+  },
+  {
+    "name": "Astana",
+    "date": "2020",
+    "count": {
+      "female": 500,
+      "male": 700
+    }
+  },
+  {
+    "name": "Astana",
+    "date": "2020",
+    "count": {
+      "female": 500,
+      "male": 700
+    }
+  },
+  {
+    "name": "Example",
+    "date": "2020",
+    "count": {
+      "female": 500,
+      "male": 700
+    }
+  },
+  {
+    "name": "Example",
+    "date": "2020",
+    "count": {
+      "female": 500,
+      "male": 700
+    }
+  },
+  {
+    "name": "London",
+    "date": "2020",
+    "count": {
+      "female": 500,
+      "male": 700
+    }
+  },
+  {
+    "name": "London",
+    "date": "2020",
+    "count": {
+      "female": 500,
+      "male": 700
+    }
   }
 ]
