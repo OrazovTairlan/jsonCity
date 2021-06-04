@@ -8,51 +8,49 @@ import Lodash from "lodash";
 import _ from "underscore";
 
 function filterItems() {
+    let arr = [];
     let jsonData = json;
     let grouppedData = _.groupBy(jsonData, "region");
+    let arrDate = [];
     let date = Object.values(grouppedData);
     for (let item of date) {
         let dateGroupData = _.groupBy(item, "date");
         console.log(dateGroupData);
-
-    }
-    let arrDateGroupDate = Object.values(dateGroupDate);
-    for (let item of arrDateGroupDate) {
-        let femaleArrObj = [];
-        let maleArrObj = [];
-        let commonObj = {};
-        let femaleArr = item.filter(function (item) {
-            return item.sex == "female";
-        });
-        let maleArr = item.filter(function (item) {
-            return item.sex == "male";
-        });
-        let commonFemale = Lodash.sumBy(femaleArr, "value");
-        let commonMale = Lodash.sumBy(maleArr, "value");
-        let femaleObj = {
-            female: commonFemale,
-            date: item[0].date,
-        };
-        let maleObj = {
-            male: commonMale,
-            date: item[0].date,
-        };
-        obj = {region: item[0].region};
-        let copyFemaleObj = {...femaleObj};
-        let copyMaleObj = {...maleObj};
-        commonObj = {...obj};
-        femaleArrObj.push(copyFemaleObj);
-        maleArrObj.push(copyMaleObj);
-        maleArrObj.push(copyMaleObj);
-        const result = renderHTML(femaleArrObj, maleArrObj, commonObj);
-        loadHTML(result);
+        arrDate = Object.values(dateGroupData);
+        for (let i = 0; i < arrDate.length; i++) {
+            console.log(arrDate[i]);
+            console.log(arrDate.length);
+            let femaleArr = _.filter(arrDate[i], function (item) {
+                return item.sex == "female";
+            });
+            let femaleSum = Lodash.sumBy(femaleArr, "value");
+            let femaleObj = {
+                female: femaleSum,
+                date: femaleArr[0].date
+            }
+            let maleArr = _.filter(arrDate[i], function (item) {
+                return item.sex == "male";
+            });
+            let maleSum = Lodash.sumBy(maleArr, "value");
+            let maleObj = {
+                male: maleSum,
+                date: maleArr[0].date
+            };
+            arr.push(femaleObj, maleObj);
+            if (i == arrDate.length-1) {
+                console.log("end");
+                let readyFemaleArr = [];
+                let re
+                console.log(arr, femaleArr[0].region);
+                arr = [];
+            }
+        }
     }
 }
 
 filterItems();
 
-function renderHTML(femaleArr, maleArr, commonObj) {
-    GLOBAL_STATE.push(commonObj.region);
+function renderHTML(femaleArr, maleArr, region) {
     let femaleColumn = ``;
     let maleColumn = ``;
     for (let item of femaleArr) {
