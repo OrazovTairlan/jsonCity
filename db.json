@@ -1,0 +1,74 @@
+[
+  {
+    "sex": "female",
+    "value": 100,
+    "date": "2021",
+    "region": "Semey"
+  },
+  {
+    "sex": "female",
+    "value": 100,
+    "date": "2021",
+    "region": "Semey"
+  },
+  {
+    "sex": "male",
+    "value": 200,
+    "date": "2021",
+    "region": "Semey"
+  },
+  {
+    "sex": "male",
+    "value": 200,
+    "date": "2021",
+    "region": "Semey"
+  },
+  {
+    "sex": "female",
+    "value": 100,
+    "date": "2020",
+    "region": "Semey"
+  },
+  {
+    "sex": "female",
+    "value": 100,
+    "date": "2020",
+    "region": "Semey"
+  },
+  {
+    "sex": "male",
+    "value": 100,
+    "date": "2020",
+    "region": "Semey"
+  },
+  {
+    "sex": "male",
+    "value": 100,
+    "date": "2020",
+    "region": "Semey"
+  },
+  {
+    "sex": "male",
+    "value": 100,
+    "date": "2020",
+    "region": "Astana"
+  },
+  {
+    "sex": "female",
+    "value": 200,
+    "date": "2020",
+    "region": "Astana"
+  },
+  {
+    "sex": "male",
+    "value": 100,
+    "date": "2021",
+    "region": "Astana"
+  },
+  {
+    "sex": "female",
+    "value": 100,
+    "date": "2021",
+    "region": "Astana"
+  }
+]
