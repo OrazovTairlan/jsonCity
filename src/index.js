@@ -1,7 +1,5 @@
 import "./style.css";
 
-const GLOBAL_STATE = [];
-
 import json from "../db.json";
 
 import Lodash from "lodash";
@@ -15,34 +13,39 @@ function filterItems() {
     let date = Object.values(grouppedData);
     for (let item of date) {
         let dateGroupData = _.groupBy(item, "date");
-        console.log(dateGroupData);
         arrDate = Object.values(dateGroupData);
         for (let i = 0; i < arrDate.length; i++) {
-            console.log(arrDate[i]);
-            console.log(arrDate.length);
             let femaleArr = _.filter(arrDate[i], function (item) {
                 return item.sex == "female";
             });
             let femaleSum = Lodash.sumBy(femaleArr, "value");
             let femaleObj = {
                 female: femaleSum,
-                date: femaleArr[0].date
-            }
+                date: femaleArr[0].date,
+            };
             let maleArr = _.filter(arrDate[i], function (item) {
                 return item.sex == "male";
             });
             let maleSum = Lodash.sumBy(maleArr, "value");
             let maleObj = {
                 male: maleSum,
-                date: maleArr[0].date
+                date: maleArr[0].date,
             };
             arr.push(femaleObj, maleObj);
-            if (i == arrDate.length-1) {
-                console.log("end");
-                let readyFemaleArr = [];
-                let re
-                console.log(arr, femaleArr[0].region);
+            if (i == arrDate.length - 1) {
+                let readyFemaleArr = _.filter(arr, function (item) {
+                    for (let key in item) {
+                        return key == "female";
+                    }
+                });
+                let readyMaleArr = _.filter(arr, function (item) {
+                    for (let key in item) {
+                        return key == "male";
+                    }
+                });
                 arr = [];
+                const result = renderHTML(readyFemaleArr, readyMaleArr, femaleArr[0].region);
+                loadHTML(result);
             }
         }
     }
@@ -51,45 +54,53 @@ function filterItems() {
 filterItems();
 
 function renderHTML(femaleArr, maleArr, region) {
+    console.log(femaleArr);
+    console.log(maleArr);
+    let city = `<td rowspan="3">${region}</td>`
     let femaleColumn = ``;
-    let maleColumn = ``;
     for (let item of femaleArr) {
-        femaleColumn += `Женщин ${item.female} в ${item.date} <br> <br>`
+        femaleColumn += `
+         <div class="cell">
+              <div class="data">
+               ${item.date}
+              </div>
+              <div class="count">
+               ${item.female}
+              </div>
+        </div>
+        `
     }
+    let maleColumn = ``;
     for (let item of maleArr) {
-        maleColumn += `Мужчин ${item.male} в ${item.date} <br> <br>`
+        maleColumn += ` 
+ <div class="cell">
+      <div class="data">
+       ${item.date}
+      </div>
+      <div class="count">
+        ${item.male}
+      </div>
+    </div>`
     }
-    let html = `${femaleColumn} <br> ${maleColumn}`
-    return html;
-//         `
-//    <tr>
-//    <td rowspan="6">Город/td>
-//    <td rowspan="3">Мужчины</td>
-//    <td>Д</td>
-//    <td>К</td>
-// </tr>
-// <tr>
-//    <td>Д</td>
-//    <td>К</td>
-// </tr>
-// <tr>
-//    <td>Д</td>
-//    <td>К</td>
-// </tr>
-// <tr>
-//    <td rowspan="3">Ж</td>
-//    <td>Д</td>
-//    <td>К</td>
-// </tr>
-// <tr>
-//    <td>Д</td>
-//    <td>К</td>
-// </tr>
-// <tr>
-//    <td>Д</td>
-//    <td>К</td>
-// </tr>
-//     `;
+
+    return (`
+   <div class="data-ref">
+  <div class="definition">
+    Женщины
+  </div>
+  <div class="row">
+  ${femaleColumn}
+  </div>
+</div>
+<div class="data-ref">
+  <div class="definition">
+    Мужчины
+  </div>
+  <div class="row">
+  ${maleColumn}
+  </div>
+</div>
+`);
 }
 
 function loadHTML(html) {
