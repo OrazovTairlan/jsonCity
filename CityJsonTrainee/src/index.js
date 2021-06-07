@@ -1,118 +1,156 @@
-import _ from "underscore";
 import "./style.css";
 
-import jsonData from "../db.json";
+import json from "../db.json";
+
 import Lodash from "lodash";
+import _ from "underscore";
 
-// async function fetchData(path) {
-//     let result = await fetch(path);
-//     result = await result.json();
-//     console.log(result)
-//     return result;
-// }
+function groupBy(jsonArr, conditionStr, flag = false) {
+    if (flag) {
+        return Object.values(_.groupBy(jsonArr, conditionStr));
+    }
+    return _.groupBy(jsonArr, conditionStr);
+}
 
-async function loadItems() {
-    const $table = document.querySelector(".headerRow");
-    const json = groupJson();
-    const html = json.map((item) => {
-        return renderItems(item);
+function filterByFemale(item) {
+    for (let key in item) {
+        return key == "female";
+    }
+}
+
+function filterByMale(item) {
+    for (let key in item) {
+        return key == "male";
+    }
+}
+
+function filterObjByFemale(item) {
+    return item.sex == "female";
+}
+
+function filterObjByMale(item) {
+    return item.sex == "male";
+}
+
+function iterateArr(arr, conditionStr) {
+    arr.forEach(function (item) {
+        let arrGrouppedRegionByDate = groupBy(item, "date", true);
+        arrGrouppedRegionByDate.forEach(function (elem) {
+            let femaleObjArr = _.filter(
+                arrGrouppedRegionByDate[elem],
+                filterObjByFemale
+            );
+            let femaleSum = Lodash.sumBy(femaleObjArr, "value");
+            let femaleObj = {
+                female: femaleSum,
+                date: femaleObjArr[0].date,
+            };
+        });
     });
-    $table.insertAdjacentHTML("afterend", html.join(""));
 }
 
-async function filterItems() {
-    const jsonData = jsonData;
-    let date = jsonData[0].date;
-    const result = jsonData.every((item) => {
-        return item.date == date;
-    });
-    return result;
+function createSexObj(obj, value, date) {
+    let copyObj = {...obj};
+    for (let key in copyObj) {
+        copyObj[key] = value;
+        copyObj.date = date;
+    }
+    return copyObj;
 }
 
-function renderItems(item) {
-    return (
-        `
-   <tbody class="row" data-name = ${item.name}>
-     <tr>
-         <td rowspan="2" class="cityName">${item.name}</td>
-         <td class="maleSex">Мужчина</td>
-         <td class="date">${item.date}</td>
-         <td class="countMale">${item.count.male}</td>
-     </tr>
-     <tr>
-         <td class="femaleSex">Женщина</td>
-         <td class="date">${item.date}</td>
-         <td class="countFemale">${item.count.female}</td>
-     </tr>
-     <tr>
-     </tbody>`
-    );
-}
-
-function groupJson() {
+function filterItems() {
     let arr = [];
-    const json = jsonData;
-    const grouppedData = _.groupBy(json, "name");
-    console.log(grouppedData);
-    let obj = {
-        name: null,
-        date: null,
-        count: {
-            female: null,
-            male: null
-        }
-    };
-    for (let key in grouppedData) {
-        for (let i = 0; i < grouppedData[key].length; i++) {
-            if (isMore(grouppedData[key], 1)) {
-                obj.name = grouppedData[key][i].name;
-                obj.date = grouppedData[key][i].date;
-                obj.count.female += grouppedData[key][i].count.female;
-                obj.count.male += grouppedData[key][i].count.male; // finished creating obj
-                const copyObj = {...obj};
-                arr.push(copyObj);
-                console.log(obj);
-                if (i == grouppedData[key].length-1) {
-                    obj = {
-                        name: null,
-                        date: null,
-                        count: {
-                            female: null,
-                            male: null
-                        }
-                    };
-                }
-            } else {
-                obj.name = (grouppedData[key][i].name);
-                obj.date = grouppedData[key][i].date;
-                obj.count.female = grouppedData[key][i].count.female;
-                obj.count.male = grouppedData[key][i].count.male; // finished creating obj
-                const copyObj = {...obj};
-                arr.push(copyObj);
-                obj = {
-                    name: null,
-                    date: null,
-                    count: {
-                        female: null,
-                        male: null
-                    }
-                };
+    let jsonData = json;
+    let arrGrouppedRegionByDate = [];
+    let arrGrouppedByRegion = groupBy(jsonData, "region", true);
+    for (let item of arrGrouppedByRegion) {
+        arrGrouppedRegionByDate = groupBy(item, "date", true);
+        for (let i = 0; i < arrGrouppedRegionByDate.length; i++) {
+            let femaleObjArr = _.filter(
+                arrGrouppedRegionByDate[i],
+                filterObjByFemale
+            );
+            let femaleSum = Lodash.sumBy(femaleObjArr, "value");
+            let femaleObj = {
+                female: femaleSum,
+                date: femaleObjArr[0].date,
+            };
+            let maleObjArr = _.filter(arrGrouppedRegionByDate[i], filterObjByMale);
+            let maleSum = Lodash.sumBy(maleObjArr, "value");
+            if (maleObjArr.length == 0) {
             }
-            console.log(arr);
+            let maleObj = {
+                male: maleSum,
+                date: maleObjArr[0].date,
+            };
+            arr.push(femaleObj, maleObj);
+            if (i == arrGrouppedRegionByDate.length - 1) {
+                console.log(arr);
+                let readyFemaleArr = _.filter(arr, filterByFemale);
+                let readyMaleArr = _.filter(arr, filterByMale);
+                arr = [];
+                const result = renderHTML(
+                    readyFemaleArr,
+                    readyMaleArr,
+                    femaleObjArr[0].region
+                );
+                loadHTML(result);
+            }
         }
     }
-    const result = Lodash.uniqBy(arr, "name");
-    return result;
 }
 
+filterItems();
 
-function isMore(arr, length) {
-    if (arr.length > length) {
-        return true;
+function renderHTML(femaleArr, maleArr, region) {
+    let femaleCell = ``;
+    for (let item of femaleArr) {
+        femaleCell += `
+        <div class="cell">
+          <div class="d">
+          ${item.date}
+          </div>
+          <div class="c">
+            ${item.female}
+          </div>
+        </div>
+        `
     }
-    return false;
+    let maleCell = ``;
+    for (let item of maleArr) {
+        maleCell += `
+         <div class="cell">
+          <div class="d">
+          ${item.date}
+          </div>
+          <div class="c">
+            ${item.male}
+          </div>
+        </div>
+        `
+    }
+    let html = `
+    <div class="row">
+      <div class="female">
+        Женщина
+      </div>
+      <div class="data">
+      ${femaleCell}
+      </div>
+    </div>
+    <div class="row">
+      <div class="female">
+        Мужчина
+      </div>
+      <div class="data">
+      ${maleCell}
+      </div>
+    </div>
+`;
+    return html;
 }
 
-loadItems();
-
-
+function loadHTML(html) {
+    const $table = document.querySelector(".header");
+    $table.insertAdjacentHTML("beforeend", html);
+}
