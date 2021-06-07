@@ -17,6 +17,30 @@ table.iksweb th {
     color: #fff;
     font-weight: normal;
 }
-.title-center {
-    text-align: center;
+.cell {
+    display: flex;
 }
+
+.d {
+    padding: 17px;
+    border-right: 1px solid black;
+}
+
+.c {
+    padding: 17px;
+}
+.female {
+    display: flex;
+    align-items: center;
+    padding: 17px;
+}
+.cell{
+    border: 1px solid black;
+}
+.row {
+    display: inline-block;
+    display: flex;
+    border: 1px solid black;
+    align-items: center;
+}
+
