@@ -1,74 +1,43 @@
 [
   {
-    "sex": "female",
-    "value": 100,
-    "date": "2021",
-    "region": "Semey"
-  },
-  {
-    "sex": "female",
-    "value": 100,
-    "date": "2021",
-    "region": "Semey"
-  },
-  {
     "sex": "male",
-    "value": 200,
-    "date": "2021",
-    "region": "Semey"
-  },
-  {
-    "sex": "male",
-    "value": 200,
-    "date": "2021",
-    "region": "Semey"
-  },
-  {
-    "sex": "female",
     "value": 100,
     "date": "2020",
-    "region": "Semey"
-  },
-  {
-    "sex": "female",
-    "value": 100,
-    "date": "2020",
-    "region": "Semey"
+    "region": "Semey",
+    "headers": [
+      "Город",
+      "Пол",
+      "Дата",
+      "Количество"
+    ],
+    "options": {
+      "sex": false,
+      "value": true,
+      "date": false,
+      "region": false,
+      "headers": false,
+      "options": false
+    }
   },
   {
     "sex": "male",
     "value": 100,
     "date": "2020",
-    "region": "Semey"
-  },
-  {
-    "sex": "male",
-    "value": 100,
-    "date": "2020",
-    "region": "Semey"
-  },
-  {
-    "sex": "male",
-    "value": 100,
-    "date": "2020",
-    "region": "Astana"
-  },
-  {
-    "sex": "female",
-    "value": 200,
-    "date": "2020",
-    "region": "Astana"
-  },
-  {
-    "sex": "male",
-    "value": 100,
-    "date": "2021",
-    "region": "Astana"
-  },
-  {
-    "sex": "female",
-    "value": 100,
-    "date": "2021",
-    "region": "Astana"
+    "region": "Semey",
+    "headers": [
+      "Город",
+      "Пол",
+      "Дата",
+      "Количество"
+    ],
+    "options": {
+      "sex": false,
+      "value": true,
+      "date": false,
+      "region": false,
+      "headers": false,
+      "options": false
+    }
   }
+
 ]
