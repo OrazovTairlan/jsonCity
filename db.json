@@ -1,43 +1,5 @@
 [
   {
-    "sex": "male",
-    "value": 100,
-    "date": "2020",
-    "region": "Semey",
-    "headers": [
-      "Город",
-      "Пол",
-      "Дата",
-      "Количество"
-    ],
-    "options": {
-      "sex": false,
-      "value": true,
-      "date": false,
-      "region": false,
-      "headers": false,
-      "options": false
-    }
-  },
-  {
-    "sex": "male",
-    "value": 100,
-    "date": "2020",
-    "region": "Semey",
-    "headers": [
-      "Город",
-      "Пол",
-      "Дата",
-      "Количество"
-    ],
-    "options": {
-      "sex": false,
-      "value": true,
-      "date": false,
-      "region": false,
-      "headers": false,
-      "options": false
-    }
+    "sex":
   }
-
 ]
