@@ -1,32 +1,43 @@
 [
   {
-    "sex": "female",
+    "sex": "Женщина",
     "region": "Semey",
     "date": "2021",
-    "value": 100
+    "value": 100,
+    "foo": "something",
+    "id": 1,
+    "mainId": "region"
   },
   {
-    "sex": "female",
+    "sex": "Женщина",
     "region": "Semey",
     "date": "2021",
-    "value": 100
+    "value": 100,
+    "foo": "something",
+    "id": 1
   },
   {
-    "sex": "female",
+    "sex": "Женщина",
     "region": "Semey",
     "date": "2021",
-    "value": 100
+    "value": 100,
+    "foo": "something",
+    "id": 1
   },
   {
-    "sex": "female",
+    "sex": "Женщина",
     "region": "Semey",
     "date": "2021",
-    "value": 100
+    "value": 100,
+    "foo": "something",
+    "id": 1
   },
   {
-    "sex": "female",
+    "sex": "Женщина",
     "region": "Semey",
     "date": "2021",
-    "value": 100
+    "value": 100,
+    "foo": "something",
+    "id": 1
   }
 ]

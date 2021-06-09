@@ -6,10 +6,31 @@ import config from "../config.json";
 import Lodash from "lodash";
 import _ from "underscore";
 
-
 function main() {
     const jsonData = json;
     const configData = config;
+    let grouppedJson;
+    let sumElems = {};
+    let assoc;
+    for (let item of configData) {
+        if (item.keyId && item.sum && item.assoc) {
+            grouppedJson = _.groupBy(jsonData, item.keyId);
+            sumElems = {...item.sum};
+            assoc = item.assoc;
+        }
+    }
+    console.log(grouppedJson);
+    console.log(sumElems);
+    console.log(assoc);
+
+    let headerArr = findAllByCondition(configData, "label");
+    let arrData = findAllByCondition(configData, "key").map(function (item) {
+        return findAllByCondition(jsonData, item);
+    });
+    console.log(arrData);
+    for (let i = 0; i < headerArr.length; i++) {
+        loadHTML(renderHTML(headerArr[i], arrData[i]), ".dataStore", "afterbegin");
+    }
 }
 
 function renderHTML(header, data) {
@@ -17,34 +38,26 @@ function renderHTML(header, data) {
     <div class="data">
         <table class="iksweb">
             ${renderHeaderHTML(header)}
-            ${renderDataByCondition(data)}
+            ${renderDataHTML(data)}
         </table>
     </div>
     `
 }
 
 
-function renderDataByCondition(arr) {
+function renderDataHTML(arr) {
     let html = ``;
-    html += `<tbody>`
     for (let item of arr) {
-        html += `<tr>
-                    <td>${item}</td>
-                 </tr>`
+        html += `<tr><td>${item}</td></tr>`
     }
-    html += `</tbody>`
     return html;
 }
 
-function renderHeaderHTML(item) {
+function renderHeaderHTML(arr) {
     let html = ``;
-    html += `<tbody>`;
-    html += `
-                <tr>
-                  <td${item}</td>
-                </tr>
-                `
-    html += ` </tbody>`
+    html += `<tr>`;
+    html += `<td>${arr}</td>`
+    html += `</tr>`
     return html;
 }
 

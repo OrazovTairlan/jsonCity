@@ -1,18 +1,23 @@
 [
   {
-    "key": "sex",
-    "label": "Пол"
-  },
-  {
-    "key": "region",
-    "label": "Регион"
+    "key": "value",
+    "label": "Количество"
   },
   {
     "key": "date",
     "label": "Дата"
   },
   {
-    "key": "value",
-    "label": "Количество"
+    "key": "sex",
+    "label": "Пол"
+  },
+  {
+    "key": "region",
+    "label": "Регион",
+    "keyId": "region",
+    "sum": {
+      "value": true
+    },
+    "assoc": "sex"
   }
 ]

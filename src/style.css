@@ -62,4 +62,7 @@ table.iksweb th {
     color: #fff;
     font-weight: normal;
 }
+.dataStore{
+    display: flex;
+}
 
