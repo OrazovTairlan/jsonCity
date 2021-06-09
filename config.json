@@ -1,0 +1,18 @@
+[
+  {
+    "key": "sex",
+    "label": "Пол"
+  },
+  {
+    "key": "region",
+    "label": "Регион"
+  },
+  {
+    "key": "date",
+    "label": "Дата"
+  },
+  {
+    "key": "value",
+    "label": "Количество"
+  }
+]

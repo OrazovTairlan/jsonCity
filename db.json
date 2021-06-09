@@ -1,5 +1,32 @@
 [
   {
-    "sex":
+    "sex": "female",
+    "region": "Semey",
+    "date": "2021",
+    "value": 100
+  },
+  {
+    "sex": "female",
+    "region": "Semey",
+    "date": "2021",
+    "value": 100
+  },
+  {
+    "sex": "female",
+    "region": "Semey",
+    "date": "2021",
+    "value": 100
+  },
+  {
+    "sex": "female",
+    "region": "Semey",
+    "date": "2021",
+    "value": 100
+  },
+  {
+    "sex": "female",
+    "region": "Semey",
+    "date": "2021",
+    "value": 100
   }
 ]
