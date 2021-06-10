@@ -1,21 +1,18 @@
 [
   {
-    "key": "value",
-    "label": "Количество",
-    "keyId": "date"
-  },
-  {
-    "key": "date",
-    "label": "Дата",
-    "keyId": "sex"
+    "key": "region",
+    "label": "Регион"
   },
   {
     "key": "sex",
-    "label": "Пол",
-    "keyId": "region"
+    "label": "Пол"
   },
   {
-    "key": "region",
-    "label": "Регион"
+    "key": "date",
+    "label": "Дата"
+  },
+  {
+    "key": "value",
+    "label": "Количество"
   }
 ]
