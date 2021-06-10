@@ -3,41 +3,71 @@
     "sex": "Женщина",
     "region": "Semey",
     "date": "2021",
-    "value": 100,
-    "foo": "something",
-    "id": 1,
-    "mainId": "region"
+    "value": 100
   },
   {
     "sex": "Женщина",
     "region": "Semey",
     "date": "2021",
-    "value": 100,
-    "foo": "something",
-    "id": 1
+    "value": 100
+  }, {
+  "sex": "Женщина",
+  "region": "Semey",
+  "date": "2021",
+  "value": 100
+},
+  {
+    "sex": "Женщина",
+    "region": "Semey",
+    "date": "2021",
+    "value": 100
   },
   {
     "sex": "Женщина",
     "region": "Semey",
     "date": "2021",
-    "value": 100,
-    "foo": "something",
-    "id": 1
+    "value": 100
   },
   {
     "sex": "Женщина",
     "region": "Semey",
     "date": "2021",
-    "value": 100,
-    "foo": "something",
-    "id": 1
+    "value": 100
   },
   {
-    "sex": "Женщина",
+    "sex": "Мужчина",
     "region": "Semey",
     "date": "2021",
-    "value": 100,
-    "foo": "something",
-    "id": 1
+    "value": 100
+  },
+  {
+    "sex": "Мужчина",
+    "region": "Semey",
+    "date": "2021",
+    "value": 100
+  },
+  {
+    "sex": "Мужчина",
+    "region": "Semey",
+    "date": "2021",
+    "value": 100
+  },
+  {
+    "sex": "Мужчина",
+    "region": "Semey",
+    "date": "2021",
+    "value": 100
+  },
+  {
+    "sex": "Мужчина",
+    "region": "Semey",
+    "date": "2021",
+    "value": 100
+  },
+  {
+    "sex": "Мужчина",
+    "region": "Astana",
+    "date": "2021",
+    "value": 100
   }
 ]
