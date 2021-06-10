@@ -9,11 +9,33 @@ import _ from "underscore";
 
 main();
 
+
+function createAssoc() {
+    let mainSplitter = _.pluck(config, "key")[0];
+    let startSubSplitter = _.pluck(config, "key")[1];
+    let endSubSplitter = _.pluck(config, "key")[2];
+    return [mainSplitter, startSubSplitter, endSubSplitter];
+}
+
+function getGroupsLength(startSubSplitter, flag = false) {
+    if (flag) {
+        return Lodash.uniq(_.pluck(json, startSubSplitter));
+    }
+    return Lodash.uniq(_.pluck(json, startSubSplitter)).length;
+}
+
+function canSumElems() {
+    return params.sum;
+}
+
+createAssoc();
+
 function main() {
     let headerData = getHeaderData();
     let headerHTML = renderHeaderHTML(headerData);
     loadHTML(headerHTML, ".iksweb", "afterbegin");
-    filterItems();
+    let [mainSplitter, startSubSplitter, endSubSplitter] = createAssoc();
+    filterItems(mainSplitter, startSubSplitter, endSubSplitter);
 }
 
 function groupBy(jsonArr, conditionStr, flag = false) {
@@ -47,48 +69,17 @@ function filterObjByMale(item) {
     return item.sex == "male";
 }
 
-function filterItems() {
+function filterItems(mainSplitter, startSplitter, endSplitter) {
     let arr = [];
+    let obj = {};
     let jsonData = json;
     let arrGrouppedRegionByDate = [];
-    let arrGrouppedByRegion = groupBy(jsonData, "region", true);
-    for (let item of arrGrouppedByRegion) {
-        arrGrouppedRegionByDate = groupBy(item, "date", true);
-        for (let i = 0; i < arrGrouppedRegionByDate.length; i++) {
-            let region = arrGrouppedRegionByDate[i][0].region;
-            let femaleObjArr = _.filter(
-                arrGrouppedRegionByDate[i],
-                filterObjByFemale
-            );
-            let femaleSum = Lodash.sumBy(femaleObjArr, "value");
-            let femaleObj;
-            if (femaleObjArr.length > 0) {
-                femaleObj = {
-                    sex: "Женщина",
-                    female: femaleSum,
-                    date: femaleObjArr[0].date,
-                };
-            }
-            let maleObjArr = _.filter(arrGrouppedRegionByDate[i], filterObjByMale);
-            let maleSum = Lodash.sumBy(maleObjArr, "value");
-            let maleObj;
-            if (maleObjArr.length > 0) {
-                maleObj = {
-                    sex: "Мужчина",
-                    male: maleSum,
-                    date: maleObjArr[0].date,
-                };
-            }
-            arr.push(femaleObj, maleObj);
-            if (arrGrouppedRegionByDate.length - 1 == i) {
-                let readyFemaleArr = _.filter(arr, filterByFemale);
-                let readyMaleArr = _.filter(arr, filterByMale);
-                loadHTML(
-                    renderDataHTML(readyFemaleArr, readyMaleArr, region),
-                    ".headerRow",
-                    "afterend"
-                );
-                arr = [];
+    let arrGrouppedByRegion = groupBy(jsonData, mainSplitter, true);
+    for (let arrElems of arrGrouppedByRegion) {
+        for (let i = 0; i < arrElems.length; i++) {
+            console.log(i, arrElems[i], arrElems.length);
+            if (i == arrElems.length - 1) {
+                console.log("end");
             }
         }
     }
@@ -117,66 +108,73 @@ function loadHTML(html, elem, position) {
     $elem.insertAdjacentHTML(position, html);
 }
 
-function renderDataHTML(femaleArr, maleArr, region) {
-    console.log(femaleArr, maleArr, region);
+
+function renderDataHTML(main, startSplitter, endSplitter) {
     let html = ``;
-    let firstFemale = ``;
-    let firstMale = ``;
-    let femaleColumn = ``;
-    let maleColumn = ``;
-    if (femaleArr.length == 0) {
-        return renderSexHTML(maleArr, region);
-    }
-    if (maleArr.length == 0) {
-        return renderSexHTML(femaleArr, region);
-    }
-    for (let i = 0; i < femaleArr.length; i++) {
-        if (i == 0) {
-            firstFemale = `
-                            <td>${femaleArr[i].date}</td>
-                            <td>${femaleArr[i].female}</td>
-                           `;
-        }
-    }
-    for (let i = 0; i < maleArr.length; i++) {
-        firstMale = `
-                    <td>${maleArr[i].date}</td>
-                    <td>${maleArr[i].male}</td>
-                     `;
-    }
-    for (let i = 0; i < femaleArr.length; i++) {
-        if (i !== 0) {
-            femaleColumn += `<tr>
-                         <td>${femaleArr[i].date}</td>
-                         <td>${femaleArr[i].female}</td>
-                         </tr>`;
-        }
-    }
-    for (let i = 0; i < maleArr.length; i++) {
-        if (i !== 0) {
-            maleColumn += `<tr>
-                         <td>${maleArr[i].date}</td>
-                         <td>${maleArr[i].male}</td>
-                         </tr>`;
-        }
-    }
-    html += `
-    <tbody>
-<tr>
-<td rowspan="9999999">${region}</td>
-<td rowspan="${femaleArr.length}">Женщина</td>
-${firstFemale}
-</tr>
-${femaleColumn}
-<tr>
-<td rowspan="${maleArr.length}">Мужчина</td>
-${firstMale}
-</tr>
-${maleColumn}
-</tbody>
-    `;
-    return html;
+    html += `<tbody>
+<tr>`;
+
 }
+
+// function renderDataHTML(femaleArr, maleArr, region) {
+//     let html = ``;
+//     let firstFemale = ``;
+//     let firstMale = ``;
+//     let femaleColumn = ``;
+//     let maleColumn = ``;
+//     if (femaleArr.length == 0) {
+//         return renderSexHTML(maleArr, region);
+//     }
+//     if (maleArr.length == 0) {
+//         return renderSexHTML(femaleArr, region);
+//     }
+//     for (let i = 0; i < femaleArr.length; i++) {
+//         if (i == 0) {
+//             firstFemale = `
+//                             <td>${femaleArr[i].date}</td>
+//                             <td>${femaleArr[i].female}</td>
+//                            `;
+//         }
+//     }
+//     for (let i = 0; i < maleArr.length; i++) {
+//         firstMale = `
+//                     <td>${maleArr[i].date}</td>
+//                     <td>${maleArr[i].male}</td>
+//                      `;
+//     }
+//     for (let i = 0; i < femaleArr.length; i++) {
+//         if (i !== 0) {
+//             femaleColumn += `<tr>
+//                          <td>${femaleArr[i].date}</td>
+//                          <td>${femaleArr[i].female}</td>
+//                          </tr>`;
+//         }
+//     }
+//     for (let i = 0; i < maleArr.length; i++) {
+//         if (i !== 0) {
+//             maleColumn += `<tr>
+//                          <td>${maleArr[i].date}</td>
+//                          <td>${maleArr[i].male}</td>
+//                          </tr>`;
+//         }
+//     }
+//     html += `
+//     <tbody>
+// <tr>
+// <td rowspan="9999999">${region}</td>
+// <td rowspan="${femaleArr.length}">Женщина</td>
+// ${firstFemale}
+// </tr>
+// ${femaleColumn}
+// <tr>
+// <td rowspan="${maleArr.length}">Мужчина</td>
+// ${firstMale}
+// </tr>
+// ${maleColumn}
+// </tbody>
+//     `;
+//     return html;
+// }
 
 function renderSexHTML(sexArr, region) {
     let firstSexData = ``;

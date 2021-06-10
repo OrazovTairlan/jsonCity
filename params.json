@@ -1,3 +1,4 @@
 {
-  "sum": ["value"]
+  "sum": ["value"],
+  "keyId": ["region", "sex", "date"]
 }
