@@ -45,45 +45,45 @@ function groupBy(jsonArr, conditionStr, flag = false) {
     return _.groupBy(jsonArr, conditionStr);
 }
 
-function filterByFemale(item) {
-    for (let key in item) {
-        if (item[key] == "Женщина") {
-            return true;
-        }
-    }
-}
-
-function filterByMale(item) {
-    for (let key in item) {
-        if (item[key] == "Мужчина") {
-            return true;
-        }
-    }
-}
-
-function filterObjByFemale(item) {
-    return item.sex == "female";
-}
-
-function filterObjByMale(item) {
-    return item.sex == "male";
-}
-
 function filterItems(mainSplitter, startSplitter, endSplitter) {
     let arr = [];
+    let duplicatedArr = [];
     let obj = {};
     let jsonData = json;
     let arrGrouppedRegionByDate = [];
     let arrGrouppedByRegion = groupBy(jsonData, mainSplitter, true);
     for (let arrElems of arrGrouppedByRegion) {
         for (let i = 0; i < arrElems.length; i++) {
-            console.log(i, arrElems[i], arrElems.length);
+            let grouppedByEndSplitter = groupBy(arrElems, endSplitter, true);
+            for (let arrElem of grouppedByEndSplitter) {
+                let grouppedByStartSplitter = groupBy(arrElem, startSplitter, true);
+                for (let elem of grouppedByStartSplitter) {
+                    obj = {...elem[0]};
+                    sumObj(obj, elem);
+                    duplicatedArr.push(obj);
+                }
+            }
             if (i == arrElems.length - 1) {
-                console.log("end");
+                let result = Lodash.sortBy(Lodash.uniqWith(duplicatedArr, _.isEqual), "sex");
+                let mainSplitterId = result[0].region;
+                result = groupBy(result, "sex", true);
+                loadHTML(renderDataHTML(result, mainSplitterId, mainSplitter, startSplitter, endSplitter), ".headerRow", "afterend");
+                duplicatedArr = [];
             }
         }
     }
 }
+
+function sumObj(obj, arr) {
+    for (let item of canSumElems()) {
+        for (let key in obj) {
+            if (key == item) {
+                obj[key] = Lodash.sumBy(arr, item);
+            }
+        }
+    }
+}
+
 
 function getHeaderData() {
     return _.pluck(config, "label");
@@ -109,11 +109,52 @@ function loadHTML(html, elem, position) {
 }
 
 
-function renderDataHTML(main, startSplitter, endSplitter) {
-    let html = ``;
-    html += `<tbody>
-<tr>`;
-
+function renderDataHTML(arr, mainSplitterId, mainSplitter, startSplitter, endSplitter) {
+    console.log(mainSplitter, "mainSplitter");
+    console.log(startSplitter);
+    console.log(endSplitter);
+    console.log(arr);
+    let html = `<tbody>`;
+    let firstData = ``;
+    let firstColumn = ``;
+    let resultHTML = ``;
+    let htmlResult = ``;
+    for (let arrElem of arr) {
+        console.log(arrElem);
+        for (let i = 0; i < arrElem.length; i++) {
+            if (i == 0) {
+                firstData += `<tr>`
+                for (let key in arrElem[i]) {
+                    if (key == startSplitter) {
+                        firstData += `<td rowspan="${arrElem.length}">${arrElem[i][startSplitter]}</td>`;
+                    }
+                    if (key !== startSplitter && key !== mainSplitter) {
+                        firstData += `<td>${arrElem[i][key]}</td>`
+                    }
+                }
+                firstData += `</tr>`
+            }
+            if (i !== 0) {
+                firstColumn += `<tr>`
+                for (let key in arrElem[i]) {
+                    if (key !== startSplitter && key !== mainSplitter) {
+                        firstColumn += `<td>${arrElem[i][key]}</td>`;
+                    }
+                }
+                firstColumn += `</tr>`
+            }
+            if (arrElem.length - 1 == i) {
+                html += firstData;
+                html += firstColumn;
+                firstData = ``;
+                firstColumn = ``;
+            }
+        }
+    }
+    html += `
+   </tbody>`;
+    console.log(html);
+    return html;
 }
 
 // function renderDataHTML(femaleArr, maleArr, region) {
@@ -201,12 +242,7 @@ function renderSexHTML(sexArr, region) {
     sexColumn += `</tr>`;
     let html = `
     <tbody>
-        <tr>
-        <td rowspan="99">${region}</td>
-        <td rowspan="${sexArr.length}">${sexArr[0].sex}</td>
-        ${firstSexData}
-        </tr>
-        ${sexColumn}
+   
     </tbody>
     `;
     return html;
