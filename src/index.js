@@ -67,7 +67,7 @@ function filterItems(mainSplitter, startSplitter, endSplitter) {
                 let result = Lodash.sortBy(Lodash.uniqWith(duplicatedArr, _.isEqual), "sex");
                 let mainSplitterId = result[0].region;
                 result = groupBy(result, "sex", true);
-                loadHTML(renderDataHTML(result, mainSplitterId, mainSplitter, startSplitter, endSplitter), ".headerRow", "afterend");
+                loadHTML(renderDataHTML(result, mainSplitter, mainSplitter, startSplitter, endSplitter), ".headerRow", "afterend");
                 duplicatedArr = [];
             }
         }
@@ -102,7 +102,7 @@ function renderHeaderHTML(arr) {
 function resetArr(arr) {
     arr = [];
 }
-
+    
 function loadHTML(html, elem, position) {
     const $elem = document.querySelector(elem);
     $elem.insertAdjacentHTML(position, html);
@@ -110,17 +110,17 @@ function loadHTML(html, elem, position) {
 
 
 function renderDataHTML(arr, mainSplitterId, mainSplitter, startSplitter, endSplitter) {
-    console.log(mainSplitter, "mainSplitter");
+    console.log(arr);
+    console.log(mainSplitter);
     console.log(startSplitter);
     console.log(endSplitter);
-    console.log(arr);
     let html = `<tbody>`;
     let firstData = ``;
     let firstColumn = ``;
     let resultHTML = ``;
     let htmlResult = ``;
+    console.log(arr[0][0])
     for (let arrElem of arr) {
-        console.log(arrElem);
         for (let i = 0; i < arrElem.length; i++) {
             if (i == 0) {
                 firstData += `<tr>`
@@ -153,97 +153,6 @@ function renderDataHTML(arr, mainSplitterId, mainSplitter, startSplitter, endSpl
     }
     html += `
    </tbody>`;
-    console.log(html);
     return html;
 }
 
-// function renderDataHTML(femaleArr, maleArr, region) {
-//     let html = ``;
-//     let firstFemale = ``;
-//     let firstMale = ``;
-//     let femaleColumn = ``;
-//     let maleColumn = ``;
-//     if (femaleArr.length == 0) {
-//         return renderSexHTML(maleArr, region);
-//     }
-//     if (maleArr.length == 0) {
-//         return renderSexHTML(femaleArr, region);
-//     }
-//     for (let i = 0; i < femaleArr.length; i++) {
-//         if (i == 0) {
-//             firstFemale = `
-//                             <td>${femaleArr[i].date}</td>
-//                             <td>${femaleArr[i].female}</td>
-//                            `;
-//         }
-//     }
-//     for (let i = 0; i < maleArr.length; i++) {
-//         firstMale = `
-//                     <td>${maleArr[i].date}</td>
-//                     <td>${maleArr[i].male}</td>
-//                      `;
-//     }
-//     for (let i = 0; i < femaleArr.length; i++) {
-//         if (i !== 0) {
-//             femaleColumn += `<tr>
-//                          <td>${femaleArr[i].date}</td>
-//                          <td>${femaleArr[i].female}</td>
-//                          </tr>`;
-//         }
-//     }
-//     for (let i = 0; i < maleArr.length; i++) {
-//         if (i !== 0) {
-//             maleColumn += `<tr>
-//                          <td>${maleArr[i].date}</td>
-//                          <td>${maleArr[i].male}</td>
-//                          </tr>`;
-//         }
-//     }
-//     html += `
-//     <tbody>
-// <tr>
-// <td rowspan="9999999">${region}</td>
-// <td rowspan="${femaleArr.length}">Женщина</td>
-// ${firstFemale}
-// </tr>
-// ${femaleColumn}
-// <tr>
-// <td rowspan="${maleArr.length}">Мужчина</td>
-// ${firstMale}
-// </tr>
-// ${maleColumn}
-// </tbody>
-//     `;
-//     return html;
-// }
-
-function renderSexHTML(sexArr, region) {
-    let firstSexData = ``;
-    let sexColumn = ``;
-    for (let i = 0; i < sexArr.length; i++) {
-        if (i == 0) {
-            for (let key in sexArr[i]) {
-                if (key !== "sex") {
-                    firstSexData += `<td>${sexArr[i][key]}</td>`;
-                }
-            }
-        }
-    }
-    for (let i = 0; i < sexArr.length; i++) {
-        sexColumn += `<tr>`;
-        if (i !== 0) {
-            for (let key in sexArr[i]) {
-                if (key !== "sex") {
-                    sexColumn += `<td>${sexArr[i][key]}</td>`;
-                }
-            }
-        }
-    }
-    sexColumn += `</tr>`;
-    let html = `
-    <tbody>
-   
-    </tbody>
-    `;
-    return html;
-}
