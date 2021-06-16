@@ -1,9 +1,5 @@
 [
   {
-    "key": "region",
-    "label": "Регион"
-  },
-  {
     "key": "sex",
     "label": "Пол"
   },

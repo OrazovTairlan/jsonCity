@@ -9,7 +9,6 @@ import _ from "underscore";
 
 main();
 loadHTML(renderOptions(), ".iksweb", "afterend")
-function
 
 const inputBtn = document.querySelector(".btn");
 const inputText = document.querySelector(".text");
@@ -166,6 +165,8 @@ function loadHTML(html, elem, position) {
 
 
 function renderDataHTML(arr, mainSplitterId, mainSplitter, startSplitter, endSplitter) {
+    console.log(arr)
+    console.log(mainSplitter)
     let html = `<tbody><tr><td rowspan = "999">${arr[0][0][mainSplitterId]}</td></tr>`;
     let firstData = ``;
     let firstColumn = ``;
