@@ -8,7 +8,59 @@ import Lodash from "lodash";
 import _ from "underscore";
 
 main();
+loadHTML(renderOptions(), ".iksweb", "afterend")
+function
 
+const inputBtn = document.querySelector(".btn");
+const inputText = document.querySelector(".text");
+const inputTextBy = document.querySelector(".textBy")
+console.log(inputBtn, inputText);
+
+inputBtn.addEventListener("click", function(e){
+    const bodyElem = document.querySelector("body")
+    const ikswebElem = document.querySelector(".iksweb")
+    ikswebElem.textContent = ``;
+    const inputValueText = inputText.value
+    const inputValueTextBy = inputTextBy.value
+    main(inputValueText, inputValueTextBy)
+})
+
+function findAllByCondition(jsonArr, condition){
+    return _.pluck(jsonArr, condition)
+}
+
+function aggrBy(jsonArr, condition){
+    function max (){
+        return Math.max.apply(this,jsonArr)
+    }
+    function min (){
+        return Math.min.apply(this, jsonArr)
+    }
+    function count (){
+        return jsonArr.length
+    }
+    function avg(){
+        return (Math.max.apply(this,jsonArr)/count())
+    }
+    function sum(){
+        return Lodash.sum(jsonArr);
+    }
+    if (condition == "max"){
+        return max()
+    }
+    if (condition == "min"){
+        return min()
+    }
+    if (condition == "count"){
+        return count()
+    }
+    if (condition == "avg"){
+        return avg()
+    }
+    if (condition == "sum"){
+        return sum()
+    }
+}
 
 function createAssoc() {
     let mainSplitter = _.pluck(config, "key")[0];
@@ -30,12 +82,12 @@ function canSumElems() {
 
 createAssoc();
 
-function main() {
+function main(condition, by) {
     let headerData = getHeaderData();
     let headerHTML = renderHeaderHTML(headerData);
     loadHTML(headerHTML, ".iksweb", "afterbegin");
     let [mainSplitter, startSubSplitter, endSubSplitter] = createAssoc();
-    filterItems(mainSplitter, startSubSplitter, endSubSplitter);
+    filterItems(mainSplitter, startSubSplitter, endSubSplitter, condition, by);
 }
 
 function groupBy(jsonArr, conditionStr, flag = false) {
@@ -45,8 +97,10 @@ function groupBy(jsonArr, conditionStr, flag = false) {
     return _.groupBy(jsonArr, conditionStr);
 }
 
-function filterItems(mainSplitter, startSplitter, endSplitter) {
+function filterItems(mainSplitter, startSplitter, endSplitter, condition = "sum", by = "value") {
     let arr = [];
+    console.log(startSplitter)
+    console.log(endSplitter)
     let duplicatedArr = [];
     let obj = {};
     let jsonData = json;
@@ -57,9 +111,11 @@ function filterItems(mainSplitter, startSplitter, endSplitter) {
             let grouppedByEndSplitter = groupBy(arrElems, endSplitter, true);
             for (let arrElem of grouppedByEndSplitter) {
                 let grouppedByStartSplitter = groupBy(arrElem, startSplitter, true);
+                console.log(grouppedByStartSplitter);
                 for (let elem of grouppedByStartSplitter) {
+                    console.log(elem)
                     obj = {...elem[0]};
-                    sumObj(obj, elem);
+                    sumObj(obj, elem, condition, by);
                     duplicatedArr.push(obj);
                 }
             }
@@ -70,15 +126,15 @@ function filterItems(mainSplitter, startSplitter, endSplitter) {
                 loadHTML(renderDataHTML(result, mainSplitter, mainSplitter, startSplitter, endSplitter), ".headerRow", "afterend");
                 duplicatedArr = [];
             }
-        }
+        }       
     }
 }
 
-function sumObj(obj, arr) {
+function sumObj(obj, arr, condition, by = "value") {
     for (let item of canSumElems()) {
         for (let key in obj) {
             if (key == item) {
-                obj[key] = Lodash.sumBy(arr, item);
+                obj[key] = aggrBy(findAllByCondition(arr, by), condition);
             }
         }
     }
@@ -110,16 +166,11 @@ function loadHTML(html, elem, position) {
 
 
 function renderDataHTML(arr, mainSplitterId, mainSplitter, startSplitter, endSplitter) {
-    console.log(arr);
-    console.log(mainSplitter);
-    console.log(startSplitter);
-    console.log(endSplitter);
-    let html = `<tbody>`;
+    let html = `<tbody><tr><td rowspan = "999">${arr[0][0][mainSplitterId]}</td></tr>`;
     let firstData = ``;
     let firstColumn = ``;
     let resultHTML = ``;
     let htmlResult = ``;
-    console.log(arr[0][0])
     for (let arrElem of arr) {
         for (let i = 0; i < arrElem.length; i++) {
             if (i == 0) {
@@ -156,3 +207,16 @@ function renderDataHTML(arr, mainSplitterId, mainSplitter, startSplitter, endSpl
     return html;
 }
 
+function renderOptions(){
+    let html = `<select class = "text">
+    <option value = "sum">Суммировать</option>
+    <option value = "min">Найти минимальное число</option>
+    <option value = "max">Найти максимальное число</option>
+    <option value = "count">Найти количество</option>
+</select><select class = "textBy">`;
+    for (let item of config){
+        html += `<option value = "${item.key}">${item.label}</option>`
+    }
+    html += `</select`
+    return html;
+}
