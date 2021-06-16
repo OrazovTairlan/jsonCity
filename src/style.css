@@ -66,3 +66,35 @@ table.iksweb th {
     display: flex;
 }
 
+
+.data {
+  display: flex;
+}
+
+.sub {
+  display: flex;
+  flex-direction: column;
+}
+
+.split {
+  padding: 17px;
+  border: 1px solid black;
+}
+
+.mainSplit {
+  align-items: center;
+  display: flex;
+}
+
+.subSplit {
+  display: flex;
+  align-items: center;
+}
+
+.subElem {
+  display: flex;
+}
+
+.endSplit {
+  border: 1px solid black;
+}
