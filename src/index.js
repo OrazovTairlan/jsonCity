@@ -13,7 +13,6 @@ loadHTML(renderOptions(), ".iksweb", "afterend")
 const inputBtn = document.querySelector(".btn");
 const inputText = document.querySelector(".text");
 const inputTextBy = document.querySelector(".textBy")
-console.log(inputBtn, inputText);
 
 inputBtn.addEventListener("click", function(e){
     const bodyElem = document.querySelector("body")
@@ -98,8 +97,6 @@ function groupBy(jsonArr, conditionStr, flag = false) {
 
 function filterItems(mainSplitter, startSplitter, endSplitter, condition = "sum", by = "value") {
     let arr = [];
-    console.log(startSplitter)
-    console.log(endSplitter)
     let duplicatedArr = [];
     let obj = {};
     let jsonData = json;
@@ -110,9 +107,7 @@ function filterItems(mainSplitter, startSplitter, endSplitter, condition = "sum"
             let grouppedByEndSplitter = groupBy(arrElems, endSplitter, true);
             for (let arrElem of grouppedByEndSplitter) {
                 let grouppedByStartSplitter = groupBy(arrElem, startSplitter, true);
-                console.log(grouppedByStartSplitter);
                 for (let elem of grouppedByStartSplitter) {
-                    console.log(elem)
                     obj = {...elem[0]};
                     sumObj(obj, elem, condition, by);
                     duplicatedArr.push(obj);
@@ -157,7 +152,15 @@ function renderHeaderHTML(arr) {
 function resetArr(arr) {
     arr = [];
 }
-    
+
+function countObjProps(obj){
+  let count = 0;
+  for (let key in obj){
+    count += 1;
+  }
+  return count
+}
+
 function loadHTML(html, elem, position) {
     const $elem = document.querySelector(elem);
     $elem.insertAdjacentHTML(position, html);
@@ -167,6 +170,9 @@ function loadHTML(html, elem, position) {
 function renderDataHTML(arr, mainSplitterId, mainSplitter, startSplitter, endSplitter) {
     console.log(arr)
     console.log(mainSplitter)
+    console.log(startSplitter)
+    console.log(endSplitter)
+    if (countObjProps(arr[0][0]) >= 4){
     let html = `<tbody><tr><td rowspan = "999">${arr[0][0][mainSplitterId]}</td></tr>`;
     let firstData = ``;
     let firstColumn = ``;
@@ -206,6 +212,34 @@ function renderDataHTML(arr, mainSplitterId, mainSplitter, startSplitter, endSpl
     html += `
    </tbody>`;
     return html;
+  } else {
+    let html = ``;
+    let firstData = ``
+    for (let arrElem of arr){
+      for (let i = 0; i < arrElem.length; i++){
+        if (i==0){
+            firstData += `<tr>`
+          for (let key in arrElem[i]){
+            if (key == mainSplitter){
+          firstData += `<td rowspan = "${arrElem.length}">${arrElem[i][key]}</td>`
+        } else {
+          firstData += `<td>${arrElem[i][key]}</td>`
+        }
+      }
+      firstData += `</tr>`
+      }
+      else {    
+        for (let key in arrElem[i]){
+            if (key !== mainSplitter){
+              firstData += `<td>${arrElem[i][key]}</td>`
+            }
+        }
+      }
+    }
+  }
+  console.log(firstData)
+  return firstData;
+}
 }
 
 function renderOptions(){
