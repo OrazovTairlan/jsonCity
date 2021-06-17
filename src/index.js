@@ -99,9 +99,37 @@ function filterItems(
   condition = "sum",
   by = "value"
 ) {
-  console.log(mainSplitter);
-  console.log(startSplitter);
-  console.log(endSplitter);
+  let countKeys = createAssoc().length;
+  if (countKeys == 2) {
+    let duplicatedArr = [];
+    let obj = {};
+    let keysFromConfig = createAssoc();
+    let arrItemsByConfig = getItemsByCondition(json, keysFromConfig);
+    let arrGrouppedByRegion = groupBy(arrItemsByConfig, mainSplitter, true);
+    for (let arrElem of arrGrouppedByRegion) {
+      obj = { ...arrElem[0] };
+      sumObj(obj, arrElem, condition, by);
+      duplicatedArr.push(obj);
+    }
+    loadHTML(renderHTML(duplicatedArr), ".headerRow", "afterend");
+    duplicatedArr = [];
+    return;
+  }
+  if (countKeys == 1) {
+    let duplicatedArr = [];
+    let obj = {};
+    let keysFromConfig = createAssoc();
+    let arrItemsByConfig = getItemsByCondition(json, keysFromConfig);
+    for (let item of arrItemsByConfig) {
+      obj = { ...item };
+      sumObj(obj, arrItemsByConfig, condition, by);
+    }
+    duplicatedArr.push(obj);
+    loadHTML(renderHTML(duplicatedArr), ".headerRow", "afterend");
+    duplicatedArr = [];
+    obj = {};
+    return;
+  }
   let keysFromConfig = createAssoc();
   let arrItemsByConfig = getItemsByCondition(json, keysFromConfig);
   let arr = [];
@@ -121,13 +149,21 @@ function filterItems(
         }
       }
       if (i == arrElems.length - 1) {
+        console.log(duplicatedArr, "duplicatedArr");
+        let count = countObjProps(duplicatedArr[0]);
+        let condition;
+        if (count <= 3) {
+          condition = mainSplitter;
+        } else if (count >= 4) {
+          condition = startSplitter;
+        }
         let result = Lodash.sortBy(
           Lodash.uniqWith(duplicatedArr, _.isEqual),
-          startSplitter
+          condition
         );
+        let mainSplitterId = result[0][mainSplitter];
+        result = groupBy(result, condition, true);
         console.log(result, "result");
-        let mainSplitterId = result[0].region;
-        result = groupBy(result, startSplitter, true);
         loadHTML(
           renderDataHTML(
             result,
@@ -155,7 +191,7 @@ function sumObj(obj, arr, condition, by = "value") {
   for (let item of canSumElems()) {
     for (let key in obj) {
       if (key == item) {
-        obj[key] = aggrBy(findAllByCondition(arr, by), condition);
+        obj[key] = aggrBy(findAllByCondition(arr, item), condition);
       }
     }
   }
@@ -199,10 +235,7 @@ function renderDataHTML(
   startSplitter,
   endSplitter
 ) {
-  console.log(arr);
-  console.log(mainSplitter);
-  console.log(startSplitter);
-  console.log(endSplitter);
+  console.log(mainSplitterId, mainSplitter, startSplitter, endSplitter)
   if (countObjProps(arr[0][0]) >= 4) {
     let html = `<tbody><tr><td rowspan = "999">${arr[0][0][mainSplitterId]}</td></tr>`;
     let firstData = ``;
@@ -241,7 +274,7 @@ function renderDataHTML(
       }
     }
     html += `
-   </tbody>`;
+     </tbody>`;
     return html;
   } else {
     let html = ``;
@@ -259,29 +292,42 @@ function renderDataHTML(
           }
           firstData += `</tr>`;
         } else {
+          firstData += `<tr>`;
           for (let key in arrElem[i]) {
             if (key !== mainSplitter) {
               firstData += `<td>${arrElem[i][key]}</td>`;
             }
           }
+          firstData += `</tr>`;
         }
       }
     }
-    console.log(firstData);
     return firstData;
   }
 }
 
 function renderOptions() {
   let html = `<select class = "text">
-    <option value = "sum">Суммировать</option>
-    <option value = "min">Найти минимальное число</option>
-    <option value = "max">Найти максимальное число</option>
-    <option value = "count">Найти количество</option>
-</select><select class = "textBy">`;
+      <option value = "sum">Суммировать</option>
+      <option value = "min">Найти минимальное число</option>
+      <option value = "max">Найти максимальное число</option>
+      <option value = "count">Найти количество</option>
+  </select><select class = "textBy">`;
   for (let item of config) {
     html += `<option value = "${item.key}">${item.label}</option>`;
   }
   html += `</select`;
+  return html;
+}
+function renderHTML(arr) {
+  let html = `<tbody>`;
+  for (let item of arr) {
+    html += `<tr>`;
+    for (let key in item) {
+      html += `<td>${item[key]}</td>`;
+    }
+    html += `</tr>`;
+  }
+  html += `</tbody>`;
   return html;
 }
