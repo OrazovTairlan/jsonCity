@@ -1,3 +1,6 @@
+* {
+    box-sizing: border-box;
+}
 table.iksweb{
     width: 100%;
     border-collapse:collapse;
@@ -62,6 +65,14 @@ table.iksweb th {
     color: #fff;
     font-weight: normal;
 }
+tbody:nth-child(odd){
+    background-color: lightgray;
+}
+tbody:hover{
+    transition: all 1s;
+    background-color: green;
+}
+
 .dataStore{
     display: flex;
 }

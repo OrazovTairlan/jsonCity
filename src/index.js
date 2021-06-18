@@ -60,7 +60,7 @@ function aggrBy(jsonArr, condition) {
   }
 }
 
-function createAssoc() {
+function getKeysFromConfig() {
   return findAllByCondition(config, "key");
 }
 
@@ -75,13 +75,11 @@ function canSumElems() {
   return params.sum;
 }
 
-createAssoc();
-
 function main(condition, by) {
   let headerData = getHeaderData();
   let headerHTML = renderHeaderHTML(headerData);
   loadHTML(headerHTML, ".iksweb", "afterbegin");
-  let [mainSplitter, startSubSplitter, endSubSplitter] = createAssoc();
+  let [mainSplitter, startSubSplitter, endSubSplitter] = getKeysFromConfig();
   filterItems(mainSplitter, startSubSplitter, endSubSplitter, condition, by);
 }
 
@@ -92,37 +90,30 @@ function groupBy(jsonArr, conditionStr, flag = false) {
   return _.groupBy(jsonArr, conditionStr);
 }
 
-function filterItems(
-  mainSplitter,
-  startSplitter,
-  endSplitter,
-  condition = "sum",
-  by = "value"
-) {
-  let countKeys = createAssoc().length;
-  if (countKeys == 2) {
-    let duplicatedArr = [];
-    let obj = {};
-    let keysFromConfig = createAssoc();
-    let arrItemsByConfig = getItemsByCondition(json, keysFromConfig);
-    let arrGrouppedByRegion = groupBy(arrItemsByConfig, mainSplitter, true);
-    for (let arrElem of arrGrouppedByRegion) {
+function isLeftKeys(count) {
+  return count == getKeysFromConfig().length;
+}
+function filterItemsByCondition(mainSplitter, condition, by, group = false) {
+  let duplicatedArr = [];
+  let obj = {};
+  let keysFromConfig = getKeysFromConfig();
+  let arrItemsByConfig = getItemsByCondition(json, keysFromConfig);
+  if (group) {
+    let arrGroupped = groupBy(arrItemsByConfig, mainSplitter, true);
+    for (let arrElem of arrGroupped) {
       obj = { ...arrElem[0] };
       sumObj(obj, arrElem, condition, by);
       duplicatedArr.push(obj);
     }
     loadHTML(renderHTML(duplicatedArr), ".headerRow", "afterend");
     duplicatedArr = [];
+    obj = {};
     return;
   }
-  if (countKeys == 1) {
-    let duplicatedArr = [];
-    let obj = {};
-    let keysFromConfig = createAssoc();
-    let arrItemsByConfig = getItemsByCondition(json, keysFromConfig);
+  if (!group) {
     for (let item of arrItemsByConfig) {
       obj = { ...item };
-      sumObj(obj, arrItemsByConfig, condition, by);
+      sumObj(obj, item, condition, by);
     }
     duplicatedArr.push(obj);
     loadHTML(renderHTML(duplicatedArr), ".headerRow", "afterend");
@@ -130,12 +121,26 @@ function filterItems(
     obj = {};
     return;
   }
-  let keysFromConfig = createAssoc();
+}
+function filterItems(
+  mainSplitter,
+  startSplitter,
+  endSplitter,
+  condition = "sum",
+  by = "value"
+) {
+  let countKeys = getKeysFromConfig().length;
+  if (isLeftKeys(2)) {
+    filterItemsByCondition(mainSplitter, condition, by, true);
+  }
+  if (isLeftKeys(1)) {
+    filterItemsByCondition(mainSplitter, condition, by);
+  }
+  let keysFromConfig = getKeysFromConfig();
   let arrItemsByConfig = getItemsByCondition(json, keysFromConfig);
   let arr = [];
   let duplicatedArr = [];
   let obj = {};
-  let arrGrouppedRegionByDate = [];
   let arrGrouppedByRegion = groupBy(arrItemsByConfig, mainSplitter, true);
   for (let arrElems of arrGrouppedByRegion) {
     for (let i = 0; i < arrElems.length; i++) {
@@ -163,7 +168,6 @@ function filterItems(
         let lengthElems = result.length;
         // let mainSplitterId = result[0].region;
         result = groupBy(result, condition, true);
-        console.log(result, "result")
         loadHTML(
           renderDataHTML(
             result,
@@ -189,7 +193,6 @@ function getItemsByCondition(jsonArr, arrConditionStr) {
 }
 
 function sumObj(obj, arr, condition, by = "value") {
-  console.log(arr)
   for (let item of canSumElems()) {
     for (let key in obj) {
       if (key == item) {
@@ -199,12 +202,11 @@ function sumObj(obj, arr, condition, by = "value") {
   }
 }
 
-function commonAggr(jsonArr, key, text){
-  return jsonArr.filter(function(item){
-    return item[key] == text
-  }).length
+function commonAggr(jsonArr, key, text) {
+  return jsonArr.filter(function (item) {
+    return item[key] == text;
+  }).length;
 }
-console.log(commonAggr(json, "value", 700)) 
 
 function getHeaderData() {
   return _.pluck(config, "label");
@@ -212,11 +214,11 @@ function getHeaderData() {
 
 function renderHeaderHTML(arr) {
   let html = ``;
-  html += `<tbody class = "headerRow"><tr>`;
+  html += `<thead class = "headerRow"><tr>`;
   for (let item of arr) {
-    html += `<td>${item}</td>`;
+    html += `<th scope = "col">${item}</th>`;
   }
-  html += `</tr></tbody>`;
+  html += `</tr></thead>`;
   return html;
 }
 
@@ -245,8 +247,11 @@ function renderDataHTML(
   endSplitter,
   lengthELems
 ) {
+  console.log(arr)
   if (countObjProps(arr[0][0]) >= 4) {
-    let html = `<tbody><tr><td rowspan = "${lengthELems+1}">${arr[0][0][mainSplitterId]}</td></tr>`;
+    let html = `<tbody><tr><td rowspan = "${lengthELems + 1}">${
+      arr[0][0][mainSplitterId]
+    }</td></tr>`;
     let firstData = ``;
     let firstColumn = ``;
     let resultHTML = ``;
@@ -326,7 +331,7 @@ function renderOptions() {
     html += `<option value = "${item.key}">${item.label}</option>`;
   }
   html += `</select`;
-  html += `<input type = "text"> Общее: `
+  html += `<input type = "text"> Общее: `;
   return html;
 }
 function renderHTML(arr) {
