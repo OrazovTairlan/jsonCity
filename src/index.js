@@ -149,7 +149,6 @@ function filterItems(
         }
       }
       if (i == arrElems.length - 1) {
-        console.log(duplicatedArr, "duplicatedArr");
         let count = countObjProps(duplicatedArr[0]);
         let condition;
         if (count <= 3) {
@@ -161,16 +160,18 @@ function filterItems(
           Lodash.uniqWith(duplicatedArr, _.isEqual),
           condition
         );
-        let mainSplitterId = result[0][mainSplitter];
+        let lengthElems = result.length;
+        // let mainSplitterId = result[0].region;
         result = groupBy(result, condition, true);
-        console.log(result, "result");
+        console.log(result, "result")
         loadHTML(
           renderDataHTML(
             result,
             mainSplitter,
             mainSplitter,
             startSplitter,
-            endSplitter
+            endSplitter,
+            lengthElems
           ),
           ".headerRow",
           "afterend"
@@ -188,6 +189,7 @@ function getItemsByCondition(jsonArr, arrConditionStr) {
 }
 
 function sumObj(obj, arr, condition, by = "value") {
+  console.log(arr)
   for (let item of canSumElems()) {
     for (let key in obj) {
       if (key == item) {
@@ -196,6 +198,13 @@ function sumObj(obj, arr, condition, by = "value") {
     }
   }
 }
+
+function commonAggr(jsonArr, key, text){
+  return jsonArr.filter(function(item){
+    return item[key] == text
+  }).length
+}
+console.log(commonAggr(json, "value", 700)) 
 
 function getHeaderData() {
   return _.pluck(config, "label");
@@ -233,11 +242,11 @@ function renderDataHTML(
   mainSplitterId,
   mainSplitter,
   startSplitter,
-  endSplitter
+  endSplitter,
+  lengthELems
 ) {
-  console.log(mainSplitterId, mainSplitter, startSplitter, endSplitter)
   if (countObjProps(arr[0][0]) >= 4) {
-    let html = `<tbody><tr><td rowspan = "999">${arr[0][0][mainSplitterId]}</td></tr>`;
+    let html = `<tbody><tr><td rowspan = "${lengthELems+1}">${arr[0][0][mainSplitterId]}</td></tr>`;
     let firstData = ``;
     let firstColumn = ``;
     let resultHTML = ``;
@@ -308,15 +317,16 @@ function renderDataHTML(
 
 function renderOptions() {
   let html = `<select class = "text">
-      <option value = "sum">Суммировать</option>
-      <option value = "min">Найти минимальное число</option>
-      <option value = "max">Найти максимальное число</option>
-      <option value = "count">Найти количество</option>
+      <option value = "sum" data-id = "num">Суммировать</option>
+      <option value = "min" data-id = "num">Найти минимальное число</option>
+      <option value = "max" data-id = "num">Найти максимальное число</option>
+      <option value = "count" data-id = "numAndStr">Найти количество</option>
   </select><select class = "textBy">`;
   for (let item of config) {
     html += `<option value = "${item.key}">${item.label}</option>`;
   }
   html += `</select`;
+  html += `<input type = "text"> Общее: `
   return html;
 }
 function renderHTML(arr) {
