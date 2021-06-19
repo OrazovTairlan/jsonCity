@@ -6,13 +6,42 @@ import params from "../params.json";
 
 import Lodash from "lodash";
 import _ from "underscore";
-
+import {sort} from "fast-sort"
 main();
 loadHTML(renderOptions(), ".iksweb", "afterend");
 
 const inputBtn = document.querySelector(".btn");
 const inputText = document.querySelector(".text");
 const inputTextBy = document.querySelector(".textBy");
+const headerRow = document.querySelector(".headerRow")
+
+function getKeysInsteadLabel(label){
+  return config.filter(function(item){
+    return item.label == label
+  })
+}
+const bodyElem = document.querySelector("body")
+console.log(bodyElem)
+bodyElem.addEventListener("click", function(e){
+  console.log("click", e.target)
+})
+headerRow.addEventListener("click", function(e){
+  console.log(e.target)
+  console.log("something")
+  try {
+  if (e.target.dataset.sort == "sort"){
+     console.log("something, something")
+    const ikswebElem = document.querySelector(".iksweb")
+    ikswebElem.textContent = ""
+    console.log(ikswebElem)
+    let howSort = e.target.classList.value
+    let bySort = getKeysInsteadLabel(e.target.dataset.value)[0].key
+    main({howSort:howSort, bySort:bySort})
+  }
+} catch(e){
+  console.log(e.message, e.error)
+}
+})
 
 inputBtn.addEventListener("click", function (e) {
   const bodyElem = document.querySelector("body");
@@ -20,7 +49,7 @@ inputBtn.addEventListener("click", function (e) {
   ikswebElem.textContent = ``;
   const inputValueText = inputText.value;
   const inputValueTextBy = inputTextBy.value;
-  main(inputValueText, inputValueTextBy);
+  main({condition:inputValueText, by:inputValueTextBy})
 });
 
 function findAllByCondition(jsonArr, condition) {
@@ -75,12 +104,13 @@ function canSumElems() {
   return params.sum;
 }
 
-function main(condition, by) {
+function main(obj={condition:"sum", by:"value", howSort:"asc", sortBy:"value"}) {
+  console.log(obj)
   let headerData = getHeaderData();
   let headerHTML = renderHeaderHTML(headerData);
   loadHTML(headerHTML, ".iksweb", "afterbegin");
   let [mainSplitter, startSubSplitter, endSubSplitter] = getKeysFromConfig();
-  filterItems(mainSplitter, startSubSplitter, endSubSplitter, condition, by);
+  filterItems(mainSplitter, startSubSplitter, endSubSplitter, obj.condition, obj.by, obj.howSort, obj.sortBy);
 }
 
 function groupBy(jsonArr, conditionStr, flag = false) {
@@ -127,7 +157,9 @@ function filterItems(
   startSplitter,
   endSplitter,
   condition = "sum",
-  by = "value"
+  by = "value",
+  howSort,
+  bySort
 ) {
   let countKeys = getKeysFromConfig().length;
   if (isLeftKeys(2)) {
@@ -138,6 +170,7 @@ function filterItems(
   }
   let keysFromConfig = getKeysFromConfig();
   let arrItemsByConfig = getItemsByCondition(json, keysFromConfig);
+  arrItemsByConfig = sortByStr(arrItemsByConfig, bySort, howSort)
   let arr = [];
   let duplicatedArr = [];
   let obj = {};
@@ -167,6 +200,9 @@ function filterItems(
         );
         let lengthElems = result.length;
         // let mainSplitterId = result[0].region;
+        console.log(result, "not sorted")
+        result = sortByStr(result, bySort, howSort)
+        console.log(result, "sorted")
         result = groupBy(result, condition, true);
         loadHTML(
           renderDataHTML(
@@ -216,7 +252,7 @@ function renderHeaderHTML(arr) {
   let html = ``;
   html += `<thead class = "headerRow"><tr>`;
   for (let item of arr) {
-    html += `<th scope = "col">${item}</th>`;
+    html += `<th scope = "col">${item}<button data-value = "${item}" class = "asc" data-sort = "sort">Сортировать по возрастанию</button><button data-sort = "sort" data-value = "${item}" class = "desc">Сортировать по убыванию</button></th>`;
   }
   html += `</tr></thead>`;
   return html;
@@ -247,7 +283,6 @@ function renderDataHTML(
   endSplitter,
   lengthELems
 ) {
-  console.log(arr)
   if (countObjProps(arr[0][0]) >= 4) {
     let html = `<tbody><tr><td rowspan = "${lengthELems + 1}">${
       arr[0][0][mainSplitterId]
@@ -345,4 +380,10 @@ function renderHTML(arr) {
   }
   html += `</tbody>`;
   return html;
+}
+function sortByStr(jsonArr, bySort = "value", howSort = "asc"){
+  if (howSort == "asc"){
+    return sort(jsonArr).asc(i=>i[bySort])
+  }
+  return sort(jsonArr).desc(i=>i[bySort])
 }

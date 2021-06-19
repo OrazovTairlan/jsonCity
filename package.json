@@ -18,7 +18,9 @@
   "license": "ISC",
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
+    "fast-sort": "^3.0.2",
     "lodash": "^4.17.21",
+    "mdbootstrap": "^4.19.2",
     "underscore": "^1.13.1",
     "webpack-dev-server": "^3.11.2"
   },
